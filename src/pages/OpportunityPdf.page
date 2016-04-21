@@ -1,0 +1,103 @@
+<apex:page showHeader="false" sidebar="false" controller="OpportunityPdfController" contentType="{!RenderedContentType}" renderAs="{!RenderingService}" applyHtmlTag="false" docType="html-5.0">
+
+<html>
+    <head>
+        <apex:stylesheet value="{!URLFOR($Resource.OpportunityPdf, 'css/styles.css')}" />
+    </head>
+    <body>
+        <h1>Top 20 Opportunities</h1>
+        <div>
+            <h2>Overview</h2>
+        </div>
+        <div style="page-break-after:always;"  id="OverviewSection">
+            <div>
+                <span class="ListSection"><strong>Description: </strong>List of top 20 Opportunities</span>
+                <span class="ListSection"><strong>Total Amount for Opportunities: </strong>
+                    <apex:outputText value="€{0, number, ###,###,##0.00}">
+                        <apex:param value="{!OpportunityTotalAmount}" />
+                    </apex:outputText>
+                </span>
+            </div>
+            <div>
+                <span class="ListSection"><strong>Earliest Date: </strong>
+                    <apex:outputText value="{0, date, dd/MM/yyyy}">
+                        <apex:param value="{!EarliestDate}" />
+                    </apex:outputText>
+                </span>
+                <span class="ListSection"><strong>Latest Ending: </strong>
+                    <apex:outputText value="{0, date, dd/MM/yyyy}">
+                        <apex:param value="{!LatestDate}" />
+                    </apex:outputText>
+                </span>
+            </div>
+            <apex:dataTable value="{!AllWrappedOpportunities}" var="each_opp" id="theTable" rowClasses="odd,even" styleClass="tableClass">
+                <apex:column >
+                    <apex:facet name="header">Id</apex:facet>
+                    <apex:outputText value="{!each_opp.Record.Id}"/>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Name</apex:facet>
+                    <apex:outputText value="{!each_opp.Record.Name}"/>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Stage</apex:facet>
+                    <apex:outputText value="{!each_opp.Record.StageName}"/>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Close Date</apex:facet>
+                    <apex:outputText value="{0, date, dd/MM/yyyy}">
+                        <apex:param value="{!each_opp.Record.CloseDate}" />
+                    </apex:outputText>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Amount</apex:facet>
+                    <apex:facet name="footer"><span class="t1">€{!OpportunityTotalAmount}</span></apex:facet>
+                    <apex:outputText value="€{0, number, ###,###,##0.00}">
+                        <apex:param value="{!each_opp.Record.Amount}" />
+                    </apex:outputText>
+                </apex:column>
+            </apex:dataTable>
+        </div>
+
+        <div>
+            <div>
+                <h2>Opportunity Breakdown</h2>
+            </div>
+            <apex:repeat value="{!AllWrappedOpportunities}" var="each_opp">
+                <apex:outputPanel rendered="{!NOT(each_opp.IsFirst)}">
+                    <div style="page-break-before:always;"> </div>
+                </apex:outputPanel>
+                <div class="section-wrapper">
+                    <div class="labelsSection">
+                        <div>
+                            <h3><strong>Name: </strong>{!each_opp.Record.Name}</h3>
+                        </div>
+                        <div>
+                            <span class="ListSection"><strong>Closed Date: </strong>
+                                <apex:outputText value="{0, date, dd/MM/yyyy}">
+                                    <apex:param value="{!each_opp.Record.CloseDate}" />
+                                </apex:outputText>
+                            </span>
+                        </div>
+                        <div>
+                            <span class="ListSection"><strong>Amount: </strong>
+                                <apex:outputText value="€{0, number, ###,###,##0.00}">
+                                    <apex:param value="{!each_opp.Record.Amount}" />
+                                </apex:outputText>
+                            </span>
+                        </div>
+                        <div>
+                            <span class="ListSection"><strong>Stage: </strong>{!each_opp.Record.StageName}</span>
+                        </div>
+                    </div>
+                    <div class="PictureSection">
+                        <span ><apex:image url="{!URLFOR($Resource.OpportunityPdf, each_opp.ImageLink)}" /></span>
+                    </div>
+
+                </div>
+            </apex:repeat>
+         </div>
+
+    </body>
+</html>
+</apex:page>
